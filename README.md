@@ -2,7 +2,7 @@
 
 This is a sample framework to get started using Python, FastAPI and SQLite to create a website for tracking movie ratings.
 
-You will need to get a TMDb API key to query their service. You can do so here: 
+You will need to get a TMDb API key to query their service. You can do so here: https://developer.themoviedb.org/reference/intro/getting-started
 
 Once you have the API key, change line 16 of `main.py` to reflect your key.
 
