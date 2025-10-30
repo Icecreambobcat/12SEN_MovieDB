@@ -9,12 +9,16 @@ from dotenv import load_dotenv
 from database import init_db, get_all_movies, add_movie_to_db, Movie
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logging.info("Application starting up...")
 
 app = FastAPI()
 # init_db() # Initialize database at startup - This will be handled by tests or explicit startup event
-logging.info("Database initialization will be handled by tests or explicit startup event.")
+logging.info(
+    "Database initialization will be handled by tests or explicit startup event."
+)
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -53,22 +57,32 @@ async def search(request: Request, query: str):
             response.raise_for_status()  # Raise HTTPStatusError for bad responses (4xx or 5xx)
 
             response_data = response.json()
-            if "results" not in response_data or not isinstance(response_data["results"], list):
-                logging.error(f"Unexpected response format from TMDb for query '{query}': 'results' key missing or not a list.")
-                raise HTTPException(status_code=500, detail="Unexpected response format from TMDb.")
+            if "results" not in response_data or not isinstance(
+                response_data["results"], list
+            ):
+                logging.error(
+                    f"Unexpected response format from TMDb for query '{query}': 'results' key missing or not a list."
+                )
+                raise HTTPException(
+                    status_code=500, detail="Unexpected response format from TMDb."
+                )
 
             results = response_data["results"]
             movies = [
                 Movie(
                     id=movie["id"],
-                title=movie["title"],
-                year=movie["release_date"][:4] if movie.get("release_date") else None,
-                poster_path=f"https://image.tmdb.org/t/p/w500{movie['poster_path']}"
-                if movie.get("poster_path")
-                else None,
-            )
-            for movie in results[:5]  # Limit to 5 results
-        ]
+                    title=movie["title"],
+                    year=(
+                        movie["release_date"][:4] if movie.get("release_date") else None
+                    ),
+                    poster_path=(
+                        f"https://image.tmdb.org/t/p/w500{movie['poster_path']}"
+                        if movie.get("poster_path")
+                        else None
+                    ),
+                )
+                for movie in results[:5]  # Limit to 5 results
+            ]
 
         return templates.TemplateResponse(
             "search_results.html",
@@ -76,10 +90,17 @@ async def search(request: Request, query: str):
         )
     except httpx.RequestError as e:
         logging.error(f"TMDb API request error for query '{query}': {e}")
-        raise HTTPException(status_code=503, detail="Could not connect to the movie service.")
+        raise HTTPException(
+            status_code=503, detail="Could not connect to the movie service."
+        )
     except httpx.HTTPStatusError as e:
-        logging.error(f"TMDb API error for query '{query}': Status {e.response.status_code}")
-        raise HTTPException(status_code=e.response.status_code, detail="Failed to fetch movies from TMDb.")
+        logging.error(
+            f"TMDb API error for query '{query}': Status {e.response.status_code}"
+        )
+        raise HTTPException(
+            status_code=e.response.status_code,
+            detail="Failed to fetch movies from TMDb.",
+        )
 
 
 @app.post("/add-movie")

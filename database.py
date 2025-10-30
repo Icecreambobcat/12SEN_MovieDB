@@ -20,14 +20,16 @@ def init_db(conn=None):  # Allow passing a connection
 
     try:
         c = conn.cursor()
-        c.execute("""
+        c.execute(
+            """
             CREATE TABLE IF NOT EXISTS movies
             (id INTEGER PRIMARY KEY,
              title TEXT NOT NULL,
              year TEXT,
              poster_path TEXT,
              rating INTEGER NOT NULL)
-        """)
+        """
+        )
         conn.commit()
     finally:
         if not supplied_conn and conn:  # If we opened it, we close it
