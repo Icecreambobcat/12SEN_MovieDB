@@ -1,5 +1,5 @@
 import sqlite3
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 DATABASE_NAME = "movies.db"
@@ -8,9 +8,9 @@ DATABASE_NAME = "movies.db"
 class Movie(BaseModel):
     id: int
     title: str
-    year: str = None
-    poster_path: str = None
-    rating: int = None
+    year: Optional[str] = None
+    poster_path: Optional[str] = None
+    rating: Optional[int] = None
 
 
 def init_db(conn=None):  # Allow passing a connection
